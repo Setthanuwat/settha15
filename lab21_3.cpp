@@ -9,8 +9,10 @@ using namespace std;
 
 struct student{
 
-    //Define struct student with four member (name ,id , gender, gpa);
-    
+    char *name;
+	int id;
+	char gender;
+	float gpa;
 };
 
 struct course{
@@ -20,7 +22,7 @@ struct course{
 	vector<student *> student_list;
 };
 
-student * findstudent(vector<student> allstudents,int key){ //There is something wrong in this line.
+student * findstudent(vector<student> &allstudents,int key){ //There is something wrong in this line.
 	for(unsigned int i = 0; i < allstudents.size(); i++){
 		if(allstudents[i].id  == key) return &allstudents[i];
 	}
@@ -58,17 +60,24 @@ int main(){
 	ifstream course_file("courses.txt");
 	vector<student> allstudents;
 	vector<course> allcourses;
-	
+	int a = 0;
+	int b = 0;
+	int x = 0;
 	string textline;
-	
+	char names[100][100];
 	while(getline(student_file,textline)){
 		student s; 
+		int y;
+		char g;
+		float gp;
 		
+		sscanf(textline.c_str(),"%[^,],%d,%c,%f",&names[x][0],&y,&g,&gp);
+		s = {&names[x][0],y,g,gp};
+		x++;
 		//Use sscanf() to split the values in textline and assign those values to the members of struct s;
-
+		
 		allstudents.push_back(s); 		
 	}
-	
 	int state = 1;
 	while(getline(course_file,textline)){
 		if(state == 1){
@@ -82,16 +91,31 @@ int main(){
 		}else if(state == 2){
 			if(textline == "> Students"){
 				state = 3;
+				
 			}else{
-			
+				do{
+					if(textline == "> Students")
+					{
+						a++;
+						state = 3;
+						break;
+					}
+
+				allcourses[a].lecture_list.push_back(textline);
+				}while (getline(course_file,textline));
+				
+				
 			    //Append (push_back) textline to lecture_list[] of the recently added course in allcourses[];
 			    
 			}			
 		}else{
 			if(textline == "---------------------------------------"){
 				state = 1;
+				b++;
 			}else{
 				student *p = findstudent(allstudents,atof(textline.c_str()));
+
+				allcourses[b].student_list.push_back(p);
 				
 				//Append (push_back) p to student_list of the recently added course in allcourses[];
 				
